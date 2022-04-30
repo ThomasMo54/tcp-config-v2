@@ -26,10 +26,10 @@ public class TCPConfig {
         try {
             Process process = Runtime.getRuntime().exec("D:\\temp\\" + INTERFACE_GETTER_SCRIPT_FILE_NAME);
             BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String name;
-            while((name = processOutputReader.readLine()) != null) {
-                String index = processOutputReader.readLine();
-                adapters.add(new NetworkAdapter(name, Integer.parseInt(index)));
+            String displayName;
+            while((displayName = processOutputReader.readLine()) != null) {
+                String name = processOutputReader.readLine();
+                adapters.add(new NetworkAdapter(displayName, name));
             }
         } catch (IOException e) {
             e.printStackTrace();
