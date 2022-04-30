@@ -3,14 +3,12 @@ package com.motompro.tcp_config;
 import com.motompro.tcp_config.net_adapter.NetworkAdapter;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class TCPConfig {
 
@@ -20,10 +18,10 @@ public class TCPConfig {
     private final List<NetworkAdapter> networkAdapters;
 
     public TCPConfig() {
-        this.networkAdapters = getNetworkAdapters();
+        this.networkAdapters = loadNetworkAdapters();
     }
 
-    private List<NetworkAdapter> getNetworkAdapters() {
+    public List<NetworkAdapter> loadNetworkAdapters() {
         List<NetworkAdapter> adapters = new ArrayList<>();
         try {
             Process process = Runtime.getRuntime().exec("D:\\temp\\" + INTERFACE_GETTER_SCRIPT_FILE_NAME);
@@ -37,6 +35,10 @@ public class TCPConfig {
             e.printStackTrace();
         }
         return adapters;
+    }
+
+    public List<NetworkAdapter> getNetworkAdapters() {
+        return networkAdapters;
     }
 
     public URL getJarLocation() {
