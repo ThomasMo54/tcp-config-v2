@@ -39,7 +39,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.motompro.tcp_config.Main</mainClass>
+                            <mainClass>com.motompro.tcp_config.TCPConfig</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

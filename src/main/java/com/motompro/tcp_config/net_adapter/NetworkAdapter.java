@@ -1,11 +1,11 @@
-package com.motompro.tcp_config;
+package com.motompro.tcp_config.net_adapter;
 
-public class NetAdapter {
+public class NetworkAdapter {
 
     private final String name;
     private final int index;
 
-    public NetAdapter(String name, int index) {
+    public NetworkAdapter(String name, int index) {
         this.name = name;
         this.index = index;
     }
