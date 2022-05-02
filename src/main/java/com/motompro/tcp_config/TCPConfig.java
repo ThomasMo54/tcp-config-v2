@@ -1,40 +1,28 @@
 package com.motompro.tcp_config;
 
 import com.motompro.tcp_config.net_adapter.NetworkAdapter;
+import com.motompro.tcp_config.window.MainWindow;
+import com.profesorfalken.wmi4java.WMI4Java;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TCPConfig {
 
     private static TCPConfig instance;
-    private static final String INTERFACE_GETTER_SCRIPT_FILE_NAME = "NetInterfaceGetter.exe";
 
     private final List<NetworkAdapter> networkAdapters;
 
     public TCPConfig() {
-        this.networkAdapters = loadNetworkAdapters();
+        this.networkAdapters = new ArrayList<>();
+        new MainWindow();
     }
 
     public List<NetworkAdapter> loadNetworkAdapters() {
-        List<NetworkAdapter> adapters = new ArrayList<>();
-        try {
-            Process process = Runtime.getRuntime().exec("D:\\temp\\" + INTERFACE_GETTER_SCRIPT_FILE_NAME);
-            BufferedReader processOutputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String displayName;
-            while((displayName = processOutputReader.readLine()) != null) {
-                String name = processOutputReader.readLine();
-                adapters.add(new NetworkAdapter(displayName, name));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return adapters;
+        return WMI4Java.get().getWMIObjectList("Win32_NetworkAdapterConfiguration").stream().map(wmiObj -> new NetworkAdapter(wmiObj.get("Description"))).collect(Collectors.toList());
     }
 
     public List<NetworkAdapter> getNetworkAdapters() {
