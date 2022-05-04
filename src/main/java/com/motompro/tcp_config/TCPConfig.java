@@ -3,6 +3,7 @@ package com.motompro.tcp_config;
 import com.motompro.tcp_config.window.MainWindow;
 import com.profesorfalken.wmi4java.WMI4Java;
 
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,21 +12,56 @@ import java.util.stream.Collectors;
 
 public class TCPConfig {
 
+    private static final String SAVE_FILE_NAME = "save.txt";
+
     private static TCPConfig instance;
 
     private final List<NetworkAdapter> networkAdapters;
+    private final List<Config> configs;
 
     public TCPConfig() {
-        this.networkAdapters = new ArrayList<>();
+        this.configs = loadConfigs();
         new MainWindow();
+        this.networkAdapters = loadNetworkAdapters();
     }
 
     public List<NetworkAdapter> loadNetworkAdapters() {
         return WMI4Java.get().getWMIObjectList("Win32_NetworkAdapterConfiguration").stream().map(wmiObj -> new NetworkAdapter(wmiObj.get("Description"))).collect(Collectors.toList());
     }
 
+    public List<Config> loadConfigs() {
+        List<Config> configList = new ArrayList<>();
+        File saveFile = new File("D:\\temp\\" + SAVE_FILE_NAME);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(saveFile));
+            try {
+                int configNumber = Integer.parseInt(reader.readLine());
+                for(int i = 0; i < configNumber; i++) {
+                    String name = reader.readLine();
+                    String adapter = reader.readLine();
+                    String ip = reader.readLine();
+                    String mask = reader.readLine();
+                    String gateway = reader.readLine();
+                    String favDNS = reader.readLine();
+                    String auxDNS = reader.readLine();
+                    configList.add(new Config(name, adapter, ip, mask, gateway, favDNS, auxDNS));
+                }
+                reader.close();
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return configList;
+    }
+
     public List<NetworkAdapter> getNetworkAdapters() {
         return networkAdapters;
+    }
+
+    public List<Config> getConfigs() {
+        return configs;
     }
 
     public URL getJarLocation() {
