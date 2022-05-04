@@ -1,4 +1,4 @@
-package com.motompro.tcp_config.net_adapter;
+package com.motompro.tcp_config;
 
 import java.io.IOException;
 

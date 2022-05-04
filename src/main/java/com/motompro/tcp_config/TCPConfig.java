@@ -1,6 +1,5 @@
 package com.motompro.tcp_config;
 
-import com.motompro.tcp_config.net_adapter.NetworkAdapter;
 import com.motompro.tcp_config.window.MainWindow;
 import com.profesorfalken.wmi4java.WMI4Java;
 
