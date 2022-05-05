@@ -92,6 +92,12 @@ public class TCPConfig {
         }
     }
 
+    public void newConfig(Config config) {
+        configs.add(config);
+        mainWindow.updateConfigs();
+        saveConfigs();
+    }
+
     public void deleteConfig(String name) {
         configs.removeIf(config -> config.getName().equals(name));
         mainWindow.updateConfigs();
