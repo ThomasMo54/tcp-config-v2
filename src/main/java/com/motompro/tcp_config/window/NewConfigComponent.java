@@ -60,6 +60,7 @@ public class NewConfigComponent extends JPanel {
         constraints.gridy = 5;
         constraints.insets = new Insets(INPUT_OFFSET, 0, 0, 0);
         adapterInput = new JComboBox<>();
+        adapterInput.setFocusable(false);
         adapterInput.setPreferredSize(TEXT_FIELD_SIZE);
         this.add(adapterInput, constraints);
         // Config ip
@@ -118,6 +119,7 @@ public class NewConfigComponent extends JPanel {
         constraints.gridy = 22;
         constraints.insets = new Insets(BUTTON_OFFSET, 0, 0, 0);
         JButton addButton = new JButton("Ajouter");
+        addButton.setFocusable(false);
         addButton.setPreferredSize(new Dimension(TEXT_FIELD_SIZE.width, 30));
         addButton.addActionListener(event -> newConfig().ifPresent(newConfig -> {
             TCPConfig.getInstance().newConfig(newConfig);
