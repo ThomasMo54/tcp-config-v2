@@ -28,6 +28,13 @@ public class MainWindow extends JFrame implements KeyListener {
     }
 
     private void init() {
+        // Set system look and feel
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
         // Window settings
         this.setTitle(WINDOW_TITLE);
         this.setSize(DEFAULT_WINDOW_DIMENSION);
