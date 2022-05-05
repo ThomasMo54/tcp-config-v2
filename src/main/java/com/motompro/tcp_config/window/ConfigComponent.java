@@ -1,6 +1,7 @@
 package com.motompro.tcp_config.window;
 
 import com.motompro.tcp_config.Config;
+import com.motompro.tcp_config.NetworkAdapter;
 import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
@@ -8,7 +9,9 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class ConfigComponent extends JPanel implements MouseListener {
@@ -88,7 +91,46 @@ public class ConfigComponent extends JPanel implements MouseListener {
     }
 
     private void useConfig() {
-
+        int answer = JOptionPane.showConfirmDialog(TCPConfig.getInstance().getMainWindow(),
+                "Êtes-vous sûr de vouloir utiliser la configuration " + config.getName() + " ?",
+                "Confirmer",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.INFORMATION_MESSAGE);
+        if(answer == 1 || answer == -1)
+            return;
+        if(TCPConfig.getInstance().getNetworkAdapters() == null) {
+            JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                    "Aucune interface réseau n'a été trouvée",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Optional<NetworkAdapter> adapter = TCPConfig.getInstance().getNetworkAdapters().stream()
+                .filter(a -> a.getName().equals(config.getAdapter()))
+                .findFirst();
+        if(!adapter.isPresent()) {
+            JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                    "L'interface réseau " + config.getAdapter() + " n'est pas connectée",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            boolean success = adapter.get().setIPAddress(config.getIp(), config.getMask(), config.getGateway(), config.getFavDNS(), config.getAuxDNS());
+            if(!success) {
+                JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                        "Une erreur est survenue. La configuration réseau n'a pas pu être changée",
+                        "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                    "La configuration réseau a bien été changée",
+                    "Succès",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void editConfig() {
