@@ -21,6 +21,7 @@ public class TCPConfig {
     private final List<Config> configs;
 
     public TCPConfig() {
+        instance = this;
         this.configs = loadConfigs();
         new MainWindow();
         this.networkAdapters = loadNetworkAdapters();
