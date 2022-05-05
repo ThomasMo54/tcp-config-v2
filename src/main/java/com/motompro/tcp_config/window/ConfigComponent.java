@@ -16,6 +16,7 @@ import java.util.Set;
 
 public class ConfigComponent extends JPanel implements MouseListener {
 
+    private static final int INFOS_MARGIN = 5;
     private static final int INSETS = 20;
     private static final int BUTTONS_MARGIN = 20;
 
@@ -36,12 +37,13 @@ public class ConfigComponent extends JPanel implements MouseListener {
         this.setBackground(backgroundColor);
         this.addMouseListener(this);
         // Infos panel
-        JPanel infosPanel = new JPanel();
+        GridLayout gridLayout = new GridLayout(2, 1);
+        gridLayout.setVgap(INFOS_MARGIN);
+        JPanel infosPanel = new JPanel(gridLayout);
         infosPanel.setBackground(backgroundColor);
-        infosPanel.setLayout(new GridLayout(2, 1));
         JLabel nameLabel = new JLabel(config.getName());
         infosPanel.add(nameLabel);
-        JLabel infosLabel = new JLabel(config.getIp() + " | " + config.getAdapter());
+        JLabel infosLabel = new JLabel(config.getIp() + "  |  " + config.getAdapter());
         infosLabel.setForeground(Color.GRAY);
         infosPanel.add(infosLabel);
         GridBagConstraints constraints = new GridBagConstraints();
