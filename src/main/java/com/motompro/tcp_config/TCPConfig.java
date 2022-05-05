@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class TCPConfig {
 
     private static final String SAVE_FILE_NAME = "save.txt";
+    private static final String WMI_ADAPTER_CONFIGURATION_CLASS = "Win32_NetworkAdapterConfiguration";
 
     private static TCPConfig instance;
 
@@ -26,7 +27,7 @@ public class TCPConfig {
     }
 
     public List<NetworkAdapter> loadNetworkAdapters() {
-        return WMI4Java.get().getWMIObjectList("Win32_NetworkAdapterConfiguration").stream().map(wmiObj -> new NetworkAdapter(wmiObj.get("Description"))).collect(Collectors.toList());
+        return WMI4Java.get().getWMIObjectList(WMI_ADAPTER_CONFIGURATION_CLASS).stream().map(wmiObj -> new NetworkAdapter(wmiObj.get("Description"))).collect(Collectors.toList());
     }
 
     public List<Config> loadConfigs() {
