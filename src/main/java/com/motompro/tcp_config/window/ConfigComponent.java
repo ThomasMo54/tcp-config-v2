@@ -41,9 +41,9 @@ public class ConfigComponent extends JPanel implements MouseListener {
         infosPanel.setLayout(new GridLayout(2, 1));
         JLabel nameLabel = new JLabel(config.getName());
         infosPanel.add(nameLabel);
-        JLabel adapterLabel = new JLabel(config.getAdapter());
-        adapterLabel.setForeground(Color.GRAY);
-        infosPanel.add(adapterLabel);
+        JLabel infosLabel = new JLabel(config.getIp() + " | " + config.getAdapter());
+        infosLabel.setForeground(Color.GRAY);
+        infosPanel.add(infosLabel);
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridx = 0;
