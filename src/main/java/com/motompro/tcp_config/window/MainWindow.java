@@ -1,5 +1,6 @@
 package com.motompro.tcp_config.window;
 
+import com.motompro.tcp_config.Config;
 import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ public class MainWindow extends JFrame implements KeyListener {
     private ConfigListComponent configListComponent;
     private JScrollPane configListScrollPane;
     private NewConfigComponent newConfigComponent;
+    private EditConfigComponent editConfigComponent;
 
     private JButton newButton;
     private JButton importButton;
@@ -51,7 +53,9 @@ public class MainWindow extends JFrame implements KeyListener {
         configListScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         configListScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         // Init new config component
-        newConfigComponent = new NewConfigComponent();
+        newConfigComponent = new NewConfigComponent("Nouvelle configuration");
+        // Init edit config component
+        editConfigComponent = new EditConfigComponent("Modifier la configuration");
         // Init buttons
         initButtons();
     }
@@ -117,6 +121,24 @@ public class MainWindow extends JFrame implements KeyListener {
         constraints.gridx = 1;
         constraints.weightx = 0;
         mainPanel.add(createButtonsPanel(listButton, importButton), constraints);
+        this.repaint();
+        this.setVisible(true);
+    }
+
+    public void setEditConfigLayout(Config config) {
+        mainPanel.removeAll();
+        GridBagConstraints constraints = new GridBagConstraints();
+        // Add edit config component
+        editConfigComponent.setConfig(config);
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridx = 0;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
+        mainPanel.add(editConfigComponent, constraints);
+        // Add buttons panel
+        constraints.gridx = 1;
+        constraints.weightx = 0;
+        mainPanel.add(createButtonsPanel(listButton, newButton, importButton), constraints);
         this.repaint();
         this.setVisible(true);
     }

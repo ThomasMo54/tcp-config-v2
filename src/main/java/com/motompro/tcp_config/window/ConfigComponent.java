@@ -136,7 +136,7 @@ public class ConfigComponent extends JPanel implements MouseListener {
     }
 
     private void editConfig() {
-
+        TCPConfig.getInstance().getMainWindow().setEditConfigLayout(config);
     }
 
     private void exportConfig() {

@@ -104,6 +104,13 @@ public class TCPConfig {
         saveConfigs();
     }
 
+    public void editConfig(String configName, Config newConfig) {
+        configs.removeIf(config -> config.getName().equals(configName));
+        configs.add(newConfig);
+        mainWindow.updateConfigs();
+        saveConfigs();
+    }
+
     public List<NetworkAdapter> getNetworkAdapters() {
         return networkAdapters;
     }
