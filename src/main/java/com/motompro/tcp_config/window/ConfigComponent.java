@@ -5,13 +5,19 @@ import com.motompro.tcp_config.Config;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.HashSet;
+import java.util.Set;
 
-public class ConfigComponent extends JPanel {
+public class ConfigComponent extends JPanel implements MouseListener {
 
     private static final int INSETS = 20;
+    private static final int BUTTONS_MARGIN = 20;
 
     private final Config config;
     private final Color backgroundColor;
+    private final Set<JButton> buttons = new HashSet<>();
 
     public ConfigComponent(Config config, Color backgroundColor) {
         this.config = config;
@@ -22,6 +28,7 @@ public class ConfigComponent extends JPanel {
     private void init() {
         this.setLayout(new GridBagLayout());
         this.setBackground(backgroundColor);
+        this.addMouseListener(this);
         // Infos panel
         JPanel infosPanel = new JPanel();
         infosPanel.setBackground(backgroundColor);
@@ -42,27 +49,54 @@ public class ConfigComponent extends JPanel {
         // Use button
         JButton useButton = new JButton("Utiliser");
         Border emptyBorder = BorderFactory.createEmptyBorder();
-        useButton.setBorder(emptyBorder);
-        useButton.setContentAreaFilled(false);
-        useButton.setVisible(false);
+        buttons.add(useButton);
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridx = 1;
         constraints.weightx = 0;
-        constraints.insets = new Insets(0, 0, 0, 0);
+        constraints.insets = new Insets(0, 0, 0, BUTTONS_MARGIN);
         this.add(useButton, constraints);
         // Edit button
         JButton editButton = new JButton("Modifier");
-        editButton.setBorder(emptyBorder);
-        editButton.setContentAreaFilled(false);
-        editButton.setVisible(false);
+        buttons.add(editButton);
         constraints.gridx = 2;
         this.add(editButton, constraints);
+        // Export button
+        JButton exportButton = new JButton("Exporter");
+        buttons.add(exportButton);
+        constraints.gridx = 3;
+        this.add(exportButton, constraints);
         // Delete button
         JButton deleteButton = new JButton("Supprimer");
-        deleteButton.setBorder(emptyBorder);
-        deleteButton.setContentAreaFilled(false);
-        deleteButton.setVisible(false);
-        constraints.gridx = 3;
+        buttons.add(deleteButton);
+        constraints.gridx = 4;
+        // Set buttons properties
+        buttons.forEach(button -> {
+            button.setBorder(emptyBorder);
+            button.setContentAreaFilled(false);
+            button.setVisible(false);
+            button.addMouseListener(this);
+        });
         this.add(deleteButton, constraints);
     }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        buttons.forEach(button -> button.setVisible(true));
+        if(e.getComponent() instanceof JButton)
+            e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        buttons.forEach(button -> button.setVisible(false));
+        if(e.getComponent() instanceof JButton)
+            e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+    @Override
+    public void mousePressed(MouseEvent e) {}
+    @Override
+    public void mouseReleased(MouseEvent e) {}
 }
