@@ -4,8 +4,10 @@ import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements KeyListener {
 
     private static final String WINDOW_TITLE = "TCPConfig v" + TCPConfig.VERSION;
     private static final Dimension DEFAULT_WINDOW_DIMENSION = new Dimension(960, 600);
@@ -31,6 +33,7 @@ public class MainWindow extends JFrame {
         this.setSize(DEFAULT_WINDOW_DIMENSION);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.addKeyListener(this);
         // Init main panel
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
@@ -116,4 +119,15 @@ public class MainWindow extends JFrame {
         configListComponent.updateConfigs();
         configListComponent.revalidate();
     }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+            setMainLayout();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+    @Override
+    public void keyReleased(KeyEvent e) {}
 }
