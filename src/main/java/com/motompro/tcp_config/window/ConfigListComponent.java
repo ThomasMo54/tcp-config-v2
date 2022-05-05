@@ -1,6 +1,7 @@
 package com.motompro.tcp_config.window;
 
 import com.motompro.tcp_config.Config;
+import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +14,6 @@ public class ConfigListComponent extends JPanel {
     private static final Color CONFIG_COMPONENT_COLOR_2 = new Color(225, 225, 225);
 
     private JPanel contentPanel;
-    private List<Config> configs;
 
     public ConfigListComponent() {
         init();
@@ -26,16 +26,15 @@ public class ConfigListComponent extends JPanel {
         this.setBackground(Color.WHITE);
     }
 
-    public void setConfigs(List<Config> configList) {
-        this.configs = configList;
+    public void updateConfigs() {
         contentPanel.removeAll();
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridx = 0;
         constraints.weightx = 1;
         AtomicInteger gridy = new AtomicInteger();
-        configs.forEach(config -> {
-            ConfigComponent configComponent = new ConfigComponent(config, gridy.get() % 2 == 0 ? CONFIG_COMPONENT_COLOR_1 : CONFIG_COMPONENT_COLOR_2);
+        TCPConfig.getInstance().getConfigs().forEach(config -> {
+            ConfigComponent configComponent = new ConfigComponent(this, config, gridy.get() % 2 == 0 ? CONFIG_COMPONENT_COLOR_1 : CONFIG_COMPONENT_COLOR_2);
             constraints.gridy = gridy.getAndIncrement();
             contentPanel.add(configComponent, constraints);
         });

@@ -14,28 +14,29 @@ public class TCPConfig {
 
     public static final String VERSION = "2.0";
 
-    private static final String SAVE_FILE_NAME = "save.txt";
+    private static final String SAVE_FILE_PATH = "D:\\temp\\save.txt";
     private static final String WMI_ADAPTER_CONFIGURATION_CLASS = "Win32_NetworkAdapterConfiguration";
 
     private static TCPConfig instance;
 
     private final List<NetworkAdapter> networkAdapters;
+    private final MainWindow mainWindow;
     private final List<Config> configs;
 
     public TCPConfig() {
         instance = this;
         this.configs = loadConfigs();
-        new MainWindow();
+        this.mainWindow = new MainWindow();
         this.networkAdapters = loadNetworkAdapters();
     }
 
-    public List<NetworkAdapter> loadNetworkAdapters() {
+    private List<NetworkAdapter> loadNetworkAdapters() {
         return WMI4Java.get().getWMIObjectList(WMI_ADAPTER_CONFIGURATION_CLASS).stream().map(wmiObj -> new NetworkAdapter(wmiObj.get("Description"))).collect(Collectors.toList());
     }
 
-    public List<Config> loadConfigs() {
+    private List<Config> loadConfigs() {
         List<Config> configList = new ArrayList<>();
-        File saveFile = new File("D:\\temp\\", SAVE_FILE_NAME);
+        File saveFile = new File(SAVE_FILE_PATH);
         try {
             if(!saveFile.exists()) {
                 saveFile.getParentFile().mkdirs();
@@ -67,8 +68,42 @@ public class TCPConfig {
         return configList;
     }
 
+    private void saveConfigs() {
+        File saveFile = new File(SAVE_FILE_PATH);
+        try {
+            if(!saveFile.exists()) {
+                saveFile.getParentFile().mkdirs();
+                saveFile.createNewFile();
+            }
+            BufferedWriter writer = new BufferedWriter(new FileWriter(saveFile));
+            writer.write(configs.size() + "\n");
+            for(Config config : configs) {
+                writer.write(config.getName() + "\n");
+                writer.write(config.getAdapter() + "\n");
+                writer.write(config.getIp() + "\n");
+                writer.write(config.getMask() + "\n");
+                writer.write((config.getGateway() != null ? config.getGateway() : "") + "\n");
+                writer.write((config.getFavDNS() != null ? config.getFavDNS() : "") + "\n");
+                writer.write((config.getAuxDNS() != null ? config.getAuxDNS() : "") + "\n");
+            }
+            writer.close();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteConfig(String name) {
+        configs.removeIf(config -> config.getName().equals(name));
+        mainWindow.updateConfigs();
+        saveConfigs();
+    }
+
     public List<NetworkAdapter> getNetworkAdapters() {
         return networkAdapters;
+    }
+
+    public MainWindow getMainWindow() {
+        return mainWindow;
     }
 
     public List<Config> getConfigs() {

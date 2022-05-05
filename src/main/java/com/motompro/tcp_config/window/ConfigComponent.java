@@ -1,28 +1,28 @@
 package com.motompro.tcp_config.window;
 
 import com.motompro.tcp_config.Config;
+import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class ConfigComponent extends JPanel implements MouseListener {
 
     private static final int INSETS = 20;
     private static final int BUTTONS_MARGIN = 20;
 
+    private final ConfigListComponent configListComponent;
     private final Config config;
     private final Color backgroundColor;
     private final Set<JButton> buttons = new HashSet<>();
 
-    public ConfigComponent(Config config, Color backgroundColor) {
+    public ConfigComponent(ConfigListComponent configListComponent, Config config, Color backgroundColor) {
+        this.configListComponent = configListComponent;
         this.config = config;
         this.backgroundColor = backgroundColor;
         init();
@@ -55,7 +55,7 @@ public class ConfigComponent extends JPanel implements MouseListener {
         Border emptyBorder = BorderFactory.createEmptyBorder();
         buttons.add(useButton);
         constraints.fill = GridBagConstraints.BOTH;
-        constraints.gridx = 1;
+        constraints.gridx++;
         constraints.weightx = 0;
         constraints.insets = new Insets(0, 0, 0, BUTTONS_MARGIN);
         this.add(useButton, constraints);
@@ -63,19 +63,19 @@ public class ConfigComponent extends JPanel implements MouseListener {
         JButton editButton = new JButton("Modifier");
         editButton.addActionListener(event -> editConfig());
         buttons.add(editButton);
-        constraints.gridx = 2;
+        constraints.gridx++;
         this.add(editButton, constraints);
         // Export button
         JButton exportButton = new JButton("Exporter");
         exportButton.addActionListener(event -> exportConfig());
         buttons.add(exportButton);
-        constraints.gridx = 3;
+        constraints.gridx++;
         this.add(exportButton, constraints);
         // Delete button
         JButton deleteButton = new JButton("Supprimer");
         deleteButton.addActionListener(event -> deleteConfig());
         buttons.add(deleteButton);
-        constraints.gridx = 4;
+        constraints.gridx++;
         // Set buttons properties
         buttons.forEach(button -> {
             button.setBorder(emptyBorder);
@@ -99,7 +99,14 @@ public class ConfigComponent extends JPanel implements MouseListener {
     }
 
     private void deleteConfig() {
-
+        int answer = JOptionPane.showConfirmDialog(TCPConfig.getInstance().getMainWindow(),
+                "Êtes-vous sûr de vouloir supprimer la configuration " + config.getName() + " ?",
+                "Confirmer",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+        if(answer == 1 || answer == -1)
+            return;
+        TCPConfig.getInstance().deleteConfig(config.getName());
     }
 
     @Override
