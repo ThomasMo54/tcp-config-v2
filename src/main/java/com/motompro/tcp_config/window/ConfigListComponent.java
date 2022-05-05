@@ -5,6 +5,7 @@ import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,7 +34,9 @@ public class ConfigListComponent extends JPanel {
         constraints.gridx = 0;
         constraints.weightx = 1;
         AtomicInteger gridy = new AtomicInteger();
-        TCPConfig.getInstance().getConfigs().forEach(config -> {
+        List<Config> configList = TCPConfig.getInstance().getConfigs();
+        configList.sort(Comparator.comparing(c -> c.getName().toLowerCase()));
+        configList.forEach(config -> {
             ConfigComponent configComponent = new ConfigComponent(this, config, gridy.get() % 2 == 0 ? CONFIG_COMPONENT_COLOR_1 : CONFIG_COMPONENT_COLOR_2);
             constraints.gridy = gridy.getAndIncrement();
             contentPanel.add(configComponent, constraints);
