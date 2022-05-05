@@ -5,10 +5,13 @@ import com.motompro.tcp_config.Config;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class ConfigComponent extends JPanel implements MouseListener {
 
@@ -48,6 +51,7 @@ public class ConfigComponent extends JPanel implements MouseListener {
         this.add(infosPanel, constraints);
         // Use button
         JButton useButton = new JButton("Utiliser");
+        useButton.addActionListener(event -> useConfig());
         Border emptyBorder = BorderFactory.createEmptyBorder();
         buttons.add(useButton);
         constraints.fill = GridBagConstraints.BOTH;
@@ -57,16 +61,19 @@ public class ConfigComponent extends JPanel implements MouseListener {
         this.add(useButton, constraints);
         // Edit button
         JButton editButton = new JButton("Modifier");
+        editButton.addActionListener(event -> editConfig());
         buttons.add(editButton);
         constraints.gridx = 2;
         this.add(editButton, constraints);
         // Export button
         JButton exportButton = new JButton("Exporter");
+        exportButton.addActionListener(event -> exportConfig());
         buttons.add(exportButton);
         constraints.gridx = 3;
         this.add(exportButton, constraints);
         // Delete button
         JButton deleteButton = new JButton("Supprimer");
+        deleteButton.addActionListener(event -> deleteConfig());
         buttons.add(deleteButton);
         constraints.gridx = 4;
         // Set buttons properties
@@ -77,6 +84,22 @@ public class ConfigComponent extends JPanel implements MouseListener {
             button.addMouseListener(this);
         });
         this.add(deleteButton, constraints);
+    }
+
+    private void useConfig() {
+
+    }
+
+    private void editConfig() {
+
+    }
+
+    private void exportConfig() {
+
+    }
+
+    private void deleteConfig() {
+
     }
 
     @Override
