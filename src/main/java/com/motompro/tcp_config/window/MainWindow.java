@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class MainWindow extends JFrame {
 
-    private static final String WINDOW_TITLE = "TCPConfig";
+    private static final String WINDOW_TITLE = "TCPConfig v" + TCPConfig.VERSION;
     private static final Dimension DEFAULT_WINDOW_DIMENSION = new Dimension(960, 540);
 
     private JPanel mainPanel;
