@@ -12,6 +12,7 @@ public class MainWindow extends JFrame {
 
     private JPanel mainPanel;
     private ConfigListComponent configListComponent;
+    private JScrollPane configListScrollPane;
     private JPanel buttonsPanel;
 
     public MainWindow() {
@@ -32,6 +33,10 @@ public class MainWindow extends JFrame {
         // Init config list component
         configListComponent = new ConfigListComponent();
         configListComponent.setConfigs(TCPConfig.getInstance().getConfigs());
+        configListScrollPane = new JScrollPane(configListComponent);
+        configListScrollPane.setBackground(Color.MAGENTA);
+        configListScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        configListScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         // Init buttons panel
         initButtonsPanel();
     }
@@ -63,7 +68,7 @@ public class MainWindow extends JFrame {
         constraints.gridy = 0;
         constraints.weightx = 1;
         constraints.weighty = 1;
-        mainPanel.add(configListComponent, constraints);
+        mainPanel.add(configListScrollPane, constraints);
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
