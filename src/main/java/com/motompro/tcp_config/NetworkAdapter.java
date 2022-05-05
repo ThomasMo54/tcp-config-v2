@@ -23,13 +23,13 @@ public class NetworkAdapter {
         Runtime runtime = Runtime.getRuntime();
         Process process;
         if(gateway == null && favDNS == null && auxDNS == null)
-            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + "\"" + name + "\" " + ip + " " + mask);
+            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + " \"" + name + "\" " + ip + " " + mask);
         else if(gateway == null)
-            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + "\"" + name + "\" " + ip + " " + mask + " " + favDNS + " " + auxDNS);
+            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + " \"" + name + "\" " + ip + " " + mask + " " + favDNS + " " + auxDNS);
         else if(favDNS == null && auxDNS == null)
-            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + "\"" + name + "\" " + ip + " " + mask + " " + gateway);
+            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + " \"" + name + "\" " + ip + " " + mask + " " + gateway);
         else
-            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + "\"" + name + "\" " + ip + " " + mask + " " + gateway + " " + favDNS + " " + auxDNS);
+            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + " \"" + name + "\" " + ip + " " + mask + " " + gateway + " " + favDNS + " " + auxDNS);
         BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String result = input.readLine();
         return result != null && result.equals(SUCCESS_STRING);
