@@ -31,11 +31,18 @@ public class TCPConfig {
 
     public List<Config> loadConfigs() {
         List<Config> configList = new ArrayList<>();
-        File saveFile = new File("D:\\temp\\" + SAVE_FILE_NAME);
+        File saveFile = new File("D:\\temp\\", SAVE_FILE_NAME);
         try {
+            if(!saveFile.exists()) {
+                saveFile.getParentFile().mkdirs();
+                saveFile.createNewFile();
+            }
             BufferedReader reader = new BufferedReader(new FileReader(saveFile));
             try {
-                int configNumber = Integer.parseInt(reader.readLine());
+                String configNumberStr = reader.readLine();
+                if(configNumberStr == null)
+                    return configList;
+                int configNumber = Integer.parseInt(configNumberStr);
                 for(int i = 0; i < configNumber; i++) {
                     String name = reader.readLine();
                     String adapter = reader.readLine();
