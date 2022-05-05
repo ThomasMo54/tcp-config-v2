@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class NetworkAdapter {
 
-    private static final String INTERFACE_SET_IP_SCRIPT_FILE_NAME = "NetInterfaceIPSetter.exe";
+    private static final String INTERFACE_SET_IP_SCRIPT_FILE_PATH = "D:\\temp\\NetInterfaceIPSetter.exe";
 
     private final String name;
 
@@ -17,6 +17,14 @@ public class NetworkAdapter {
     }
 
     public void setIPAddress(String ip, String mask, String gateway, String favDNS, String auxDNS) throws IOException {
-        Runtime.getRuntime().exec("D:\\temp\\" + INTERFACE_SET_IP_SCRIPT_FILE_NAME + name + " " + ip + " " + mask);
+        Runtime runtime = Runtime.getRuntime();
+        if(gateway == null && favDNS == null && auxDNS == null)
+            runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + "\"" + name + "\" " + ip + " " + mask);
+        else if(gateway == null)
+            runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + "\"" + name + "\" " + ip + " " + mask + " " + favDNS + " " + auxDNS);
+        else if(favDNS == null && auxDNS == null)
+            runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + "\"" + name + "\" " + ip + " " + mask + " " + gateway);
+        else
+            runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + "\"" + name + "\" " + ip + " " + mask + " " + gateway + " " + favDNS + " " + auxDNS);
     }
 }
