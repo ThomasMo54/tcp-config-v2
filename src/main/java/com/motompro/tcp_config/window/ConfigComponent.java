@@ -80,6 +80,7 @@ public class ConfigComponent extends JPanel implements MouseListener {
         buttons.forEach(button -> {
             button.setBorder(emptyBorder);
             button.setContentAreaFilled(false);
+            button.setFocusable(false);
             button.setVisible(false);
             button.addMouseListener(this);
         });

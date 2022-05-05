@@ -15,6 +15,10 @@ public class MainWindow extends JFrame {
     private JScrollPane configListScrollPane;
     private JPanel buttonsPanel;
 
+    private JButton newButton;
+    private JButton importButton;
+    private JButton listButton;
+
     public MainWindow() {
         init();
         setMainLayout();
@@ -37,26 +41,39 @@ public class MainWindow extends JFrame {
         configListScrollPane.setBackground(Color.MAGENTA);
         configListScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         configListScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        // Init buttons
+        initButtons();
         // Init buttons panel
-        initButtonsPanel();
+        buttonsPanel = createButtonsPanel(newButton, importButton);
     }
 
-    private void initButtonsPanel() {
-        buttonsPanel = new JPanel();
-        buttonsPanel.setLayout(new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
+    private void initButtons() {
         // New button
+        newButton = new JButton("Nouveau");
+        newButton.setFocusable(false);
+        newButton.addActionListener(event -> setNewConfigLayout());
+        // Import button
+        importButton = new JButton("Importer");
+        importButton.setFocusable(false);
+        // List button
+        listButton = new JButton("Liste");
+        listButton.setFocusable(false);
+    }
+
+    private JPanel createButtonsPanel(JButton... buttons) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.VERTICAL;
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.weightx = 1;
         constraints.weighty = 1;
-        JButton newButton = new JButton("Nouveau");
-        buttonsPanel.add(newButton, constraints);
-        // Import button
-        constraints.gridy = 1;
-        JButton importButton = new JButton("Importer");
-        buttonsPanel.add(importButton, constraints);
+        for(JButton button : buttons) {
+            panel.add(button, constraints);
+            constraints.gridy++;
+        }
+        return panel;
     }
 
     private void setMainLayout() {
@@ -73,6 +90,12 @@ public class MainWindow extends JFrame {
         constraints.gridx = 1;
         constraints.weightx = 0;
         mainPanel.add(buttonsPanel, constraints);
+        this.repaint();
+    }
+
+    private void setNewConfigLayout() {
+        mainPanel.removeAll();
+        this.repaint();
     }
 
     public void updateConfigs() {
