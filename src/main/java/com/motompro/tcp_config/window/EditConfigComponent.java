@@ -5,7 +5,6 @@ import com.motompro.tcp_config.TCPConfig;
 
 public class EditConfigComponent extends ConfigForm {
 
-    private Config config;
     private String lastName;
 
     public EditConfigComponent(String formName) {
@@ -13,7 +12,6 @@ public class EditConfigComponent extends ConfigForm {
     }
 
     public void setConfig(Config config) {
-        this.config = config;
         this.lastName = config.getName();
         if(TCPConfig.getInstance().getNetworkAdapters() != null)
             TCPConfig.getInstance().getNetworkAdapters().forEach(adapter -> adapterInput.addItem(adapter.getName()));
