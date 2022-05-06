@@ -19,7 +19,7 @@ import java.util.Set;
 public class ConfigComponent extends JPanel implements MouseListener {
 
     private static final int INFOS_MARGIN = 5;
-    private static final int INSETS = 20;
+    public static final int INSETS = 20;
     private static final int BUTTONS_MARGIN = 20;
 
     private final ConfigListComponent configListComponent;

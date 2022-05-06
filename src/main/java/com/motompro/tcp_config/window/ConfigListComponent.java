@@ -33,6 +33,7 @@ public class ConfigListComponent extends JPanel implements DocumentListener {
         searchInput = new JTextField();
         searchInput.setPreferredSize(new Dimension(0, SEARCH_BAR_HEIGHT));
         searchInput.setMinimumSize(new Dimension(0, SEARCH_BAR_HEIGHT));
+        searchInput.setBorder(BorderFactory.createCompoundBorder(searchInput.getBorder(), BorderFactory.createEmptyBorder(0, ConfigComponent.INSETS - 3, 0, 0)));
         searchInput.getDocument().addDocumentListener(this);
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
