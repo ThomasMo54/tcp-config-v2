@@ -9,6 +9,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
@@ -98,7 +99,7 @@ public class ConfigComponent extends JPanel implements MouseListener {
                 "Confirmer",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.INFORMATION_MESSAGE);
-        if(answer == 1 || answer == -1)
+        if(answer != JOptionPane.OK_OPTION)
             return;
         if(TCPConfig.getInstance().getNetworkAdapters() == null) {
             JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
@@ -140,7 +141,23 @@ public class ConfigComponent extends JPanel implements MouseListener {
     }
 
     private void exportConfig() {
-
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Sélectionnez un fichier");
+        fileChooser.setSelectedFile(new File(config.getName() + "." + TCPConfig.TCPC_FILE_EXTENSION));
+        int answer = fileChooser.showSaveDialog(TCPConfig.getInstance().getMainWindow());
+        if(answer != JFileChooser.APPROVE_OPTION)
+            return;
+        File fileToSave = fileChooser.getSelectedFile();
+        String[] splitFileName = fileToSave.getAbsolutePath().split("\\.");
+        String extension = splitFileName[splitFileName.length - 1];
+        if(!extension.equals(TCPConfig.TCPC_FILE_EXTENSION)) {
+            JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                    "L'extension du fichier est incorrecte, \"." + TCPConfig.TCPC_FILE_EXTENSION + "\" attendu",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        TCPConfig.getInstance().exportConfig(config, fileToSave);
     }
 
     private void deleteConfig() {
@@ -149,7 +166,7 @@ public class ConfigComponent extends JPanel implements MouseListener {
                 "Confirmer",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
-        if(answer == 1 || answer == -1)
+        if(answer != JOptionPane.OK_OPTION)
             return;
         TCPConfig.getInstance().deleteConfig(config.getName());
     }

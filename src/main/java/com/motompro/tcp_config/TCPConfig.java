@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class TCPConfig {
 
     public static final String VERSION = "2.0";
+    public static final String TCPC_FILE_EXTENSION = "tcpc";
 
     private static final String SAVE_FILE_PATH = "D:\\temp\\save.txt";
     private static final String WMI_ADAPTER_CONFIGURATION_CLASS = "Win32_NetworkAdapterConfiguration";
@@ -109,6 +110,30 @@ public class TCPConfig {
         configs.add(newConfig);
         mainWindow.updateConfigs();
         saveConfigs();
+    }
+
+    public void exportConfig(Config config, File exportFile) {
+        if(!exportFile.exists()) {
+            try {
+                exportFile.getParentFile().mkdirs();
+                exportFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(exportFile));
+            writer.write(config.getName() + "\n");
+            writer.write(config.getIp() + "\n");
+            writer.write(config.getMask() + "\n");
+            writer.write((config.getGateway() != null ? config.getGateway() : "") + "\n");
+            writer.write((config.getFavDNS() != null ? config.getFavDNS() : "") + "\n");
+            writer.write((config.getAuxDNS() != null ? config.getAuxDNS() : "") + "\n");
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<NetworkAdapter> getNetworkAdapters() {
