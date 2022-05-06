@@ -4,9 +4,11 @@ import com.motompro.tcp_config.Config;
 import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 
 public class MainWindow extends JFrame implements KeyListener {
 
@@ -64,6 +66,7 @@ public class MainWindow extends JFrame implements KeyListener {
         // Import button
         importButton = new JButton("Importer");
         importButton.setFocusable(false);
+        importButton.addActionListener(event -> importConfig());
         // List button
         listButton = new JButton("Liste");
         listButton.setFocusable(false);
@@ -137,6 +140,37 @@ public class MainWindow extends JFrame implements KeyListener {
         mainPanel.add(createButtonsPanel(listButton, newButton, importButton), constraints);
         this.repaint();
         this.setVisible(true);
+    }
+
+    private void importConfig() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Sélectionnez un fichier");
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory())
+                    return true;
+                else
+                    return f.getName().toLowerCase().endsWith("." + TCPConfig.TCPC_FILE_EXTENSION);
+            }
+            @Override
+            public String getDescription() {
+                return "TCP Config (*." + TCPConfig.TCPC_FILE_EXTENSION + ")";
+            }
+        });
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        int answer = fileChooser.showOpenDialog(TCPConfig.getInstance().getMainWindow());
+        if(answer != JFileChooser.APPROVE_OPTION)
+            return;
+        File fileToSave = fileChooser.getSelectedFile();
+        if(!fileToSave.getName().endsWith(TCPConfig.TCPC_FILE_EXTENSION)) {
+            JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                    "L'extension du fichier est incorrecte, \"*." + TCPConfig.TCPC_FILE_EXTENSION + "\" attendu",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        TCPConfig.getInstance().importConfig(fileToSave);
     }
 
     public void updateConfigs() {

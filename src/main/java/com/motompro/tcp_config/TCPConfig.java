@@ -136,6 +136,35 @@ public class TCPConfig {
         }
     }
 
+    public void importConfig(File importFile) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(importFile));
+            try {
+                String name = reader.readLine();
+                String ip = reader.readLine();
+                String mask = reader.readLine();
+                String gateway = reader.readLine();
+                String favDNS = reader.readLine();
+                String auxDNS = reader.readLine();
+                reader.close();
+                StringBuilder finalName = new StringBuilder(name);
+                int i = 2;
+                while(configs.stream().anyMatch(config -> config.getName().equals(finalName.toString()))) {
+                    finalName.setLength(0);
+                    finalName.append(name).append(" (").append(i).append(")");
+                    i++;
+                }
+                configs.add(new Config(finalName.toString(), "", ip, mask, gateway, favDNS, auxDNS));
+                mainWindow.updateConfigs();
+                saveConfigs();
+            } catch (NumberFormatException | IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<NetworkAdapter> getNetworkAdapters() {
         return networkAdapters;
     }

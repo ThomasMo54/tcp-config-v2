@@ -6,6 +6,7 @@ import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -143,16 +144,28 @@ public class ConfigComponent extends JPanel implements MouseListener {
     private void exportConfig() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Sélectionnez un fichier");
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory())
+                    return true;
+                else
+                    return f.getName().toLowerCase().endsWith("." + TCPConfig.TCPC_FILE_EXTENSION);
+            }
+            @Override
+            public String getDescription() {
+                return "TCP Config (*." + TCPConfig.TCPC_FILE_EXTENSION + ")";
+            }
+        });
+        fileChooser.setAcceptAllFileFilterUsed(false);
         fileChooser.setSelectedFile(new File(config.getName() + "." + TCPConfig.TCPC_FILE_EXTENSION));
         int answer = fileChooser.showSaveDialog(TCPConfig.getInstance().getMainWindow());
         if(answer != JFileChooser.APPROVE_OPTION)
             return;
         File fileToSave = fileChooser.getSelectedFile();
-        String[] splitFileName = fileToSave.getAbsolutePath().split("\\.");
-        String extension = splitFileName[splitFileName.length - 1];
-        if(!extension.equals(TCPConfig.TCPC_FILE_EXTENSION)) {
+        if(!fileToSave.getName().endsWith(TCPConfig.TCPC_FILE_EXTENSION)) {
             JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
-                    "L'extension du fichier est incorrecte, \"." + TCPConfig.TCPC_FILE_EXTENSION + "\" attendu",
+                    "L'extension du fichier est incorrecte, \"*." + TCPConfig.TCPC_FILE_EXTENSION + "\" attendu",
                     "Erreur",
                     JOptionPane.ERROR_MESSAGE);
             return;
