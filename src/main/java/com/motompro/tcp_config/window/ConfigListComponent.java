@@ -16,6 +16,7 @@ public class ConfigListComponent extends JPanel implements DocumentListener {
 
     private static final Color CONFIG_COMPONENT_COLOR_1 = new Color(240, 240, 240);
     private static final Color CONFIG_COMPONENT_COLOR_2 = new Color(225, 225, 225);
+    private static final int SEARCH_BAR_HEIGHT = 35;
     private static final int SCROLL_SPEED = 4;
 
     private JPanel contentPanel;
@@ -30,7 +31,7 @@ public class ConfigListComponent extends JPanel implements DocumentListener {
         this.setBackground(Color.WHITE);
         // Search input
         searchInput = new JTextField();
-        searchInput.setPreferredSize(new Dimension(0, 30));
+        searchInput.setMinimumSize(new Dimension(0, SEARCH_BAR_HEIGHT));
         searchInput.getDocument().addDocumentListener(this);
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
@@ -58,7 +59,7 @@ public class ConfigListComponent extends JPanel implements DocumentListener {
         AtomicInteger gridy = new AtomicInteger();
         configs.sort(Comparator.comparing(c -> c.getName().toLowerCase()));
         configs.forEach(config -> {
-            ConfigComponent configComponent = new ConfigComponent(this, config, gridy.get() % 2 == 0 ? CONFIG_COMPONENT_COLOR_1 : CONFIG_COMPONENT_COLOR_2);
+            ConfigComponent configComponent = new ConfigComponent(this, config, gridy.get() % 2 == 0 ? CONFIG_COMPONENT_COLOR_2 : CONFIG_COMPONENT_COLOR_1);
             constraints.gridy = gridy.getAndIncrement();
             contentPanel.add(configComponent, constraints);
         });
