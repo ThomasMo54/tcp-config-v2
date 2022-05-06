@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.io.IOException;
 
 public class MainWindow extends JFrame implements KeyListener {
 
@@ -23,6 +24,7 @@ public class MainWindow extends JFrame implements KeyListener {
     private JButton newButton;
     private JButton importButton;
     private JButton listButton;
+    private JButton openNetworkConnectionsButton;
 
     public MainWindow() {
         init();
@@ -71,6 +73,10 @@ public class MainWindow extends JFrame implements KeyListener {
         listButton = new JButton("Liste");
         listButton.setFocusable(false);
         listButton.addActionListener(event -> setMainLayout());
+        // Open network connections button
+        openNetworkConnectionsButton = new JButton("Connex.");
+        openNetworkConnectionsButton.setFocusable(false);
+        openNetworkConnectionsButton.addActionListener(event -> openNetworkConnectionsMenu());
     }
 
     private JPanel createButtonsPanel(JButton... buttons) {
@@ -101,7 +107,7 @@ public class MainWindow extends JFrame implements KeyListener {
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
-        mainPanel.add(createButtonsPanel(newButton, importButton), constraints);
+        mainPanel.add(createButtonsPanel(newButton, importButton, openNetworkConnectionsButton), constraints);
         this.repaint();
         this.setVisible(true);
     }
@@ -119,7 +125,7 @@ public class MainWindow extends JFrame implements KeyListener {
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
-        mainPanel.add(createButtonsPanel(listButton, importButton), constraints);
+        mainPanel.add(createButtonsPanel(listButton, importButton, openNetworkConnectionsButton), constraints);
         this.repaint();
         this.setVisible(true);
     }
@@ -137,7 +143,7 @@ public class MainWindow extends JFrame implements KeyListener {
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
-        mainPanel.add(createButtonsPanel(listButton, newButton, importButton), constraints);
+        mainPanel.add(createButtonsPanel(listButton, newButton, importButton, openNetworkConnectionsButton), constraints);
         this.repaint();
         this.setVisible(true);
     }
@@ -176,6 +182,14 @@ public class MainWindow extends JFrame implements KeyListener {
     public void updateConfigs() {
         configListComponent.updateConfigs(TCPConfig.getInstance().getConfigs());
         configListComponent.revalidate();
+    }
+
+    public void openNetworkConnectionsMenu() {
+        try {
+            Runtime.getRuntime().exec("cmd /c ncpa.cpl");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
