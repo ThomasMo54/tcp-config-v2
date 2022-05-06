@@ -1,14 +1,12 @@
 package com.motompro.tcp_config;
 
 import com.motompro.tcp_config.window.MainWindow;
-import com.profesorfalken.wmi4java.WMI4Java;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TCPConfig {
 
@@ -16,7 +14,7 @@ public class TCPConfig {
     public static final String TCPC_FILE_EXTENSION = "tcpc";
 
     private static final String SAVE_FILE_PATH = "D:\\temp\\save.txt";
-    private static final String WMI_ADAPTER_CONFIGURATION_CLASS = "Win32_NetworkAdapterConfiguration";
+    private static final String INTERFACE_SET_IP_SCRIPT_FILE_PATH = "D:\\temp\\NetInterfaceGetter.exe";
 
     private static TCPConfig instance;
 
@@ -32,7 +30,18 @@ public class TCPConfig {
     }
 
     private List<NetworkAdapter> loadNetworkAdapters() {
-        return WMI4Java.get().getWMIObjectList(WMI_ADAPTER_CONFIGURATION_CLASS).stream().map(wmiObj -> new NetworkAdapter(wmiObj.get("Description"))).collect(Collectors.toList());
+        List<NetworkAdapter> adapters = new ArrayList<>();
+        try {
+            Process process = Runtime.getRuntime().exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH);
+            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String adapter;
+            while((adapter = input.readLine()) != null)
+                adapters.add(new NetworkAdapter(adapter));
+            return adapters;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return adapters;
     }
 
     private List<Config> loadConfigs() {
