@@ -6,9 +6,11 @@ import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
@@ -17,7 +19,7 @@ import java.util.Set;
 public class ConfigComponent extends JPanel implements MouseListener {
 
     private static final int INFOS_MARGIN = 5;
-    private static final int INSETS = 20;
+    public static final int INSETS = 20;
     private static final int BUTTONS_MARGIN = 20;
 
     private final ConfigListComponent configListComponent;
@@ -98,7 +100,7 @@ public class ConfigComponent extends JPanel implements MouseListener {
                 "Confirmer",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.INFORMATION_MESSAGE);
-        if(answer == 1 || answer == -1)
+        if(answer != JOptionPane.OK_OPTION)
             return;
         if(TCPConfig.getInstance().getNetworkAdapters() == null) {
             JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
@@ -140,7 +142,35 @@ public class ConfigComponent extends JPanel implements MouseListener {
     }
 
     private void exportConfig() {
-
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Sélectionnez un fichier");
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory())
+                    return true;
+                else
+                    return f.getName().toLowerCase().endsWith("." + TCPConfig.TCPC_FILE_EXTENSION);
+            }
+            @Override
+            public String getDescription() {
+                return "TCP Config (*." + TCPConfig.TCPC_FILE_EXTENSION + ")";
+            }
+        });
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setSelectedFile(new File(config.getName() + "." + TCPConfig.TCPC_FILE_EXTENSION));
+        int answer = fileChooser.showSaveDialog(TCPConfig.getInstance().getMainWindow());
+        if(answer != JFileChooser.APPROVE_OPTION)
+            return;
+        File fileToSave = fileChooser.getSelectedFile();
+        if(!fileToSave.getName().endsWith(TCPConfig.TCPC_FILE_EXTENSION)) {
+            JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                    "L'extension du fichier est incorrecte, \"*." + TCPConfig.TCPC_FILE_EXTENSION + "\" attendu",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        TCPConfig.getInstance().exportConfig(config, fileToSave);
     }
 
     private void deleteConfig() {
@@ -149,7 +179,7 @@ public class ConfigComponent extends JPanel implements MouseListener {
                 "Confirmer",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
-        if(answer == 1 || answer == -1)
+        if(answer != JOptionPane.OK_OPTION)
             return;
         TCPConfig.getInstance().deleteConfig(config.getName());
     }

@@ -4,9 +4,12 @@ import com.motompro.tcp_config.Config;
 import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 
 public class MainWindow extends JFrame implements KeyListener {
 
@@ -15,13 +18,13 @@ public class MainWindow extends JFrame implements KeyListener {
 
     private JPanel mainPanel;
     private ConfigListComponent configListComponent;
-    private JScrollPane configListScrollPane;
     private NewConfigComponent newConfigComponent;
     private EditConfigComponent editConfigComponent;
 
     private JButton newButton;
     private JButton importButton;
     private JButton listButton;
+    private JButton openNetworkConnectionsButton;
 
     public MainWindow() {
         init();
@@ -48,10 +51,7 @@ public class MainWindow extends JFrame implements KeyListener {
         this.setContentPane(mainPanel);
         // Init config list component
         configListComponent = new ConfigListComponent();
-        configListComponent.updateConfigs();
-        configListScrollPane = new JScrollPane(configListComponent);
-        configListScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        configListScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        configListComponent.updateConfigs(TCPConfig.getInstance().getConfigs());
         // Init new config component
         newConfigComponent = new NewConfigComponent("Nouvelle configuration");
         // Init edit config component
@@ -68,10 +68,15 @@ public class MainWindow extends JFrame implements KeyListener {
         // Import button
         importButton = new JButton("Importer");
         importButton.setFocusable(false);
+        importButton.addActionListener(event -> importConfig());
         // List button
         listButton = new JButton("Liste");
         listButton.setFocusable(false);
         listButton.addActionListener(event -> setMainLayout());
+        // Open network connections button
+        openNetworkConnectionsButton = new JButton("Connex.");
+        openNetworkConnectionsButton.setFocusable(false);
+        openNetworkConnectionsButton.addActionListener(event -> openNetworkConnectionsMenu());
     }
 
     private JPanel createButtonsPanel(JButton... buttons) {
@@ -98,11 +103,11 @@ public class MainWindow extends JFrame implements KeyListener {
         constraints.gridx = 0;
         constraints.weightx = 1;
         constraints.weighty = 1;
-        mainPanel.add(configListScrollPane, constraints);
+        mainPanel.add(configListComponent, constraints);
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
-        mainPanel.add(createButtonsPanel(newButton, importButton), constraints);
+        mainPanel.add(createButtonsPanel(newButton, importButton, openNetworkConnectionsButton), constraints);
         this.repaint();
         this.setVisible(true);
     }
@@ -120,7 +125,7 @@ public class MainWindow extends JFrame implements KeyListener {
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
-        mainPanel.add(createButtonsPanel(listButton, importButton), constraints);
+        mainPanel.add(createButtonsPanel(listButton, importButton, openNetworkConnectionsButton), constraints);
         this.repaint();
         this.setVisible(true);
     }
@@ -138,14 +143,53 @@ public class MainWindow extends JFrame implements KeyListener {
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
-        mainPanel.add(createButtonsPanel(listButton, newButton, importButton), constraints);
+        mainPanel.add(createButtonsPanel(listButton, newButton, importButton, openNetworkConnectionsButton), constraints);
         this.repaint();
         this.setVisible(true);
     }
 
+    private void importConfig() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Sélectionnez un fichier");
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory())
+                    return true;
+                else
+                    return f.getName().toLowerCase().endsWith("." + TCPConfig.TCPC_FILE_EXTENSION);
+            }
+            @Override
+            public String getDescription() {
+                return "TCP Config (*." + TCPConfig.TCPC_FILE_EXTENSION + ")";
+            }
+        });
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        int answer = fileChooser.showOpenDialog(TCPConfig.getInstance().getMainWindow());
+        if(answer != JFileChooser.APPROVE_OPTION)
+            return;
+        File fileToSave = fileChooser.getSelectedFile();
+        if(!fileToSave.getName().endsWith(TCPConfig.TCPC_FILE_EXTENSION)) {
+            JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                    "L'extension du fichier est incorrecte, \"*." + TCPConfig.TCPC_FILE_EXTENSION + "\" attendu",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        TCPConfig.getInstance().importConfig(fileToSave);
+    }
+
     public void updateConfigs() {
-        configListComponent.updateConfigs();
+        configListComponent.updateConfigs(TCPConfig.getInstance().getConfigs());
         configListComponent.revalidate();
+    }
+
+    public void openNetworkConnectionsMenu() {
+        try {
+            Runtime.getRuntime().exec("cmd /c ncpa.cpl");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

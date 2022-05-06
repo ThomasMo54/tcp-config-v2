@@ -33,6 +33,9 @@ public class EditConfigComponent extends ConfigForm {
         if(name == null || name.equals("")) {
             showError(FIELD_MUST_BE_FILLED_ERROR, 3);
             success = false;
+        } else if(!lastName.equals(name) && TCPConfig.getInstance().getConfigs().stream().anyMatch(config -> config.getName().equals(name))) {
+            showError(NAME_ALREADY_EXISTS_ERROR, 3);
+            success = false;
         }
         // Adapter
         String adapter = (String) adapterInput.getSelectedItem();

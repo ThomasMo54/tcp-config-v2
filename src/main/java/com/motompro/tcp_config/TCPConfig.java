@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class TCPConfig {
 
     public static final String VERSION = "2.0";
+    public static final String TCPC_FILE_EXTENSION = "tcpc";
 
     private static final String SAVE_FILE_PATH = "D:\\temp\\save.txt";
     private static final String WMI_ADAPTER_CONFIGURATION_CLASS = "Win32_NetworkAdapterConfiguration";
@@ -109,6 +110,59 @@ public class TCPConfig {
         configs.add(newConfig);
         mainWindow.updateConfigs();
         saveConfigs();
+    }
+
+    public void exportConfig(Config config, File exportFile) {
+        if(!exportFile.exists()) {
+            try {
+                exportFile.getParentFile().mkdirs();
+                exportFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(exportFile));
+            writer.write(config.getName() + "\n");
+            writer.write(config.getIp() + "\n");
+            writer.write(config.getMask() + "\n");
+            writer.write((config.getGateway() != null ? config.getGateway() : "") + "\n");
+            writer.write((config.getFavDNS() != null ? config.getFavDNS() : "") + "\n");
+            writer.write((config.getAuxDNS() != null ? config.getAuxDNS() : "") + "\n");
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void importConfig(File importFile) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(importFile));
+            try {
+                String name = reader.readLine();
+                String ip = reader.readLine();
+                String mask = reader.readLine();
+                String gateway = reader.readLine();
+                String favDNS = reader.readLine();
+                String auxDNS = reader.readLine();
+                reader.close();
+                StringBuilder finalName = new StringBuilder(name);
+                int i = 2;
+                while(configs.stream().anyMatch(config -> config.getName().equals(finalName.toString()))) {
+                    finalName.setLength(0);
+                    finalName.append(name).append(" (").append(i).append(")");
+                    i++;
+                }
+                configs.add(new Config(finalName.toString(), "", ip, mask, gateway, favDNS, auxDNS));
+                mainWindow.updateConfigs();
+                saveConfigs();
+            } catch (NumberFormatException | IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<NetworkAdapter> getNetworkAdapters() {
