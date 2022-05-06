@@ -14,7 +14,7 @@ public class TCPConfig {
     public static final String TCPC_FILE_EXTENSION = "tcpc";
 
     private static final String SAVE_FILE_PATH = "D:\\temp\\save.txt";
-    private static final String INTERFACE_SET_IP_SCRIPT_FILE_PATH = "D:\\temp\\NetInterfaceGetter.exe";
+    private static final String INTERFACE_GET_SCRIPT_FILE_PATH = "D:\\temp\\NetInterfaceGetter.exe";
 
     private static TCPConfig instance;
 
@@ -32,7 +32,7 @@ public class TCPConfig {
     private List<NetworkAdapter> loadNetworkAdapters() {
         List<NetworkAdapter> adapters = new ArrayList<>();
         try {
-            Process process = Runtime.getRuntime().exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH);
+            Process process = Runtime.getRuntime().exec(INTERFACE_GET_SCRIPT_FILE_PATH);
             BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String adapter;
             while((adapter = input.readLine()) != null)
