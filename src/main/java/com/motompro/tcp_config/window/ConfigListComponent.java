@@ -16,7 +16,7 @@ public class ConfigListComponent extends JPanel implements DocumentListener {
 
     private static final Color CONFIG_COMPONENT_COLOR_1 = new Color(240, 240, 240);
     private static final Color CONFIG_COMPONENT_COLOR_2 = new Color(225, 225, 225);
-    private static final int SEARCH_BAR_HEIGHT = 35;
+    private static final int SEARCH_BAR_HEIGHT = 30;
     private static final int SCROLL_SPEED = 4;
 
     private JPanel contentPanel;
@@ -41,6 +41,7 @@ public class ConfigListComponent extends JPanel implements DocumentListener {
         this.add(searchInput, constraints);
         // Config list
         JPanel listContentPane = new JPanel(new BorderLayout());
+        listContentPane.setBackground(Color.WHITE);
         contentPanel = new JPanel(new GridBagLayout());
         listContentPane.add(contentPanel, BorderLayout.NORTH);
         JScrollPane scrollPane = new JScrollPane(listContentPane);
