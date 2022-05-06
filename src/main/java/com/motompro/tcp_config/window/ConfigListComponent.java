@@ -4,42 +4,83 @@ import com.motompro.tcp_config.Config;
 import com.motompro.tcp_config.TCPConfig;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
-public class ConfigListComponent extends JPanel {
+public class ConfigListComponent extends JPanel implements DocumentListener {
 
     private static final Color CONFIG_COMPONENT_COLOR_1 = new Color(240, 240, 240);
     private static final Color CONFIG_COMPONENT_COLOR_2 = new Color(225, 225, 225);
 
     private JPanel contentPanel;
+    private JTextField searchInput;
 
     public ConfigListComponent() {
         init();
     }
 
     private void init() {
-        this.setLayout(new BorderLayout());
-        contentPanel = new JPanel(new GridBagLayout());
-        this.add(contentPanel, BorderLayout.NORTH);
+        this.setLayout(new GridBagLayout());
         this.setBackground(Color.WHITE);
+        // Search input
+        searchInput = new JTextField();
+        searchInput.setPreferredSize(new Dimension(0, 30));
+        searchInput.getDocument().addDocumentListener(this);
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.weightx = 1;
+        this.add(searchInput, constraints);
+        // Config list
+        JPanel listContentPane = new JPanel(new BorderLayout());
+        contentPanel = new JPanel(new GridBagLayout());
+        listContentPane.add(contentPanel, BorderLayout.NORTH);
+        JScrollPane scrollPane = new JScrollPane(listContentPane);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        constraints.gridy = 1;
+        constraints.weighty = 1;
+        this.add(scrollPane, constraints);
     }
 
-    public void updateConfigs() {
+    public void updateConfigs(List<Config> configs) {
         contentPanel.removeAll();
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridx = 0;
         constraints.weightx = 1;
         AtomicInteger gridy = new AtomicInteger();
-        List<Config> configList = TCPConfig.getInstance().getConfigs();
-        configList.sort(Comparator.comparing(c -> c.getName().toLowerCase()));
-        configList.forEach(config -> {
+        configs.sort(Comparator.comparing(c -> c.getName().toLowerCase()));
+        configs.forEach(config -> {
             ConfigComponent configComponent = new ConfigComponent(this, config, gridy.get() % 2 == 0 ? CONFIG_COMPONENT_COLOR_1 : CONFIG_COMPONENT_COLOR_2);
             constraints.gridy = gridy.getAndIncrement();
             contentPanel.add(configComponent, constraints);
         });
+    }
+
+    private List<Config> filterConfigs(List<Config> configs, String filter) {
+        return configs.stream().filter(config -> config.getName().toLowerCase().contains(filter.toLowerCase())).collect(Collectors.toList());
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        updateConfigs(filterConfigs(TCPConfig.getInstance().getConfigs(), searchInput.getText()));
+        this.revalidate();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        updateConfigs(filterConfigs(TCPConfig.getInstance().getConfigs(), searchInput.getText()));
+        this.revalidate();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        updateConfigs(filterConfigs(TCPConfig.getInstance().getConfigs(), searchInput.getText()));
+        this.revalidate();
     }
 }

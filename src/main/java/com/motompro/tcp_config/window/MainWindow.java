@@ -15,7 +15,6 @@ public class MainWindow extends JFrame implements KeyListener {
 
     private JPanel mainPanel;
     private ConfigListComponent configListComponent;
-    private JScrollPane configListScrollPane;
     private NewConfigComponent newConfigComponent;
     private EditConfigComponent editConfigComponent;
 
@@ -48,10 +47,7 @@ public class MainWindow extends JFrame implements KeyListener {
         this.setContentPane(mainPanel);
         // Init config list component
         configListComponent = new ConfigListComponent();
-        configListComponent.updateConfigs();
-        configListScrollPane = new JScrollPane(configListComponent);
-        configListScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        configListScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        configListComponent.updateConfigs(TCPConfig.getInstance().getConfigs());
         // Init new config component
         newConfigComponent = new NewConfigComponent("Nouvelle configuration");
         // Init edit config component
@@ -98,7 +94,7 @@ public class MainWindow extends JFrame implements KeyListener {
         constraints.gridx = 0;
         constraints.weightx = 1;
         constraints.weighty = 1;
-        mainPanel.add(configListScrollPane, constraints);
+        mainPanel.add(configListComponent, constraints);
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
@@ -144,7 +140,7 @@ public class MainWindow extends JFrame implements KeyListener {
     }
 
     public void updateConfigs() {
-        configListComponent.updateConfigs();
+        configListComponent.updateConfigs(TCPConfig.getInstance().getConfigs());
         configListComponent.revalidate();
     }
 
