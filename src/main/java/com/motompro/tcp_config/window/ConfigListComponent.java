@@ -31,6 +31,7 @@ public class ConfigListComponent extends JPanel implements DocumentListener {
         this.setBackground(Color.WHITE);
         // Search input
         searchInput = new JTextField();
+        searchInput.setPreferredSize(new Dimension(0, SEARCH_BAR_HEIGHT));
         searchInput.setMinimumSize(new Dimension(0, SEARCH_BAR_HEIGHT));
         searchInput.getDocument().addDocumentListener(this);
         GridBagConstraints constraints = new GridBagConstraints();
