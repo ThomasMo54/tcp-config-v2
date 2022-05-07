@@ -62,7 +62,7 @@ public class ConfigListComponent extends JPanel implements DocumentListener {
         AtomicInteger gridy = new AtomicInteger();
         configs.sort(Comparator.comparing(c -> c.getName().toLowerCase()));
         configs.forEach(config -> {
-            ConfigComponent configComponent = new ConfigComponent(this, config, gridy.get() % 2 == 0 ? CONFIG_COMPONENT_COLOR_2 : CONFIG_COMPONENT_COLOR_1);
+            ConfigComponent configComponent = new ConfigComponent(config, gridy.get() % 2 == 0 ? CONFIG_COMPONENT_COLOR_2 : CONFIG_COMPONENT_COLOR_1);
             constraints.gridy = gridy.getAndIncrement();
             contentPanel.add(configComponent, constraints);
         });

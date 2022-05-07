@@ -20,15 +20,13 @@ public class ConfigComponent extends JPanel implements MouseListener {
 
     private static final int INFOS_MARGIN = 5;
     public static final int INSETS = 20;
-    private static final int BUTTONS_MARGIN = 20;
+    private static final int BUTTONS_MARGIN = 30;
 
-    private final ConfigListComponent configListComponent;
     private final Config config;
     private final Color backgroundColor;
     private final Set<JButton> buttons = new HashSet<>();
 
-    public ConfigComponent(ConfigListComponent configListComponent, Config config, Color backgroundColor) {
-        this.configListComponent = configListComponent;
+    public ConfigComponent(Config config, Color backgroundColor) {
         this.config = config;
         this.backgroundColor = backgroundColor;
         init();
@@ -57,7 +55,7 @@ public class ConfigComponent extends JPanel implements MouseListener {
         constraints.insets = new Insets(INSETS, INSETS, INSETS, INSETS);
         this.add(infosPanel, constraints);
         // Use button
-        JButton useButton = new JButton("Utiliser");
+        JButton useButton = new JButton(TCPConfig.getInstance().getImages().USE_ICON);
         useButton.addActionListener(event -> useConfig());
         Border emptyBorder = BorderFactory.createEmptyBorder();
         buttons.add(useButton);
@@ -67,19 +65,19 @@ public class ConfigComponent extends JPanel implements MouseListener {
         constraints.insets = new Insets(0, 0, 0, BUTTONS_MARGIN);
         this.add(useButton, constraints);
         // Edit button
-        JButton editButton = new JButton("Modifier");
+        JButton editButton = new JButton(TCPConfig.getInstance().getImages().EDIT_ICON);
         editButton.addActionListener(event -> editConfig());
         buttons.add(editButton);
         constraints.gridx++;
         this.add(editButton, constraints);
         // Export button
-        JButton exportButton = new JButton("Exporter");
+        JButton exportButton = new JButton(TCPConfig.getInstance().getImages().EXPORT_ICON);
         exportButton.addActionListener(event -> exportConfig());
         buttons.add(exportButton);
         constraints.gridx++;
         this.add(exportButton, constraints);
         // Delete button
-        JButton deleteButton = new JButton("Supprimer");
+        JButton deleteButton = new JButton(TCPConfig.getInstance().getImages().DELETE_ICON);
         deleteButton.addActionListener(event -> deleteConfig());
         buttons.add(deleteButton);
         constraints.gridx++;
@@ -187,8 +185,9 @@ public class ConfigComponent extends JPanel implements MouseListener {
     @Override
     public void mouseEntered(MouseEvent e) {
         buttons.forEach(button -> button.setVisible(true));
-        if(e.getComponent() instanceof JButton)
-            e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        Component component = e.getComponent();
+        if(component instanceof JButton)
+            component.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     @Override

@@ -18,12 +18,14 @@ public class TCPConfig {
 
     private static TCPConfig instance;
 
+    private final Images images;
     private final List<NetworkAdapter> networkAdapters;
     private final MainWindow mainWindow;
     private final List<Config> configs;
 
     public TCPConfig() {
         instance = this;
+        this.images = new Images();
         this.configs = loadConfigs();
         this.mainWindow = new MainWindow();
         this.networkAdapters = loadNetworkAdapters();
@@ -172,6 +174,10 @@ public class TCPConfig {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public Images getImages() {
+        return images;
     }
 
     public List<NetworkAdapter> getNetworkAdapters() {
