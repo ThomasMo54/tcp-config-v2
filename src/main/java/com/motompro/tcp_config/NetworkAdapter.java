@@ -1,13 +1,12 @@
 package com.motompro.tcp_config;
 
+import com.motompro.tcp_config.window.MainWindow;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class NetworkAdapter {
-
-    private static final String INTERFACE_SET_IP_SCRIPT_FILE_PATH = "D:\\temp\\NetInterfaceIPSetter.exe";
-    private static final String SUCCESS_STRING = "success";
 
     private final String name;
 
@@ -23,15 +22,15 @@ public class NetworkAdapter {
         Runtime runtime = Runtime.getRuntime();
         Process process;
         if(gateway == null && favDNS == null && auxDNS == null)
-            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + " \"" + name + "\" " + ip + " " + mask);
+            process = runtime.exec(MainWindow.INTERFACE_SET_IP_SCRIPT_FILE_PATH + " setip \"" + name + "\" " + ip + " " + mask);
         else if(gateway == null)
-            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + " \"" + name + "\" " + ip + " " + mask + " " + favDNS + " " + auxDNS);
+            process = runtime.exec(MainWindow.INTERFACE_SET_IP_SCRIPT_FILE_PATH + " setip \"" + name + "\" " + ip + " " + mask + " " + favDNS + " " + auxDNS);
         else if(favDNS == null && auxDNS == null)
-            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + " \"" + name + "\" " + ip + " " + mask + " " + gateway);
+            process = runtime.exec(MainWindow.INTERFACE_SET_IP_SCRIPT_FILE_PATH + " setip \"" + name + "\" " + ip + " " + mask + " " + gateway);
         else
-            process = runtime.exec(INTERFACE_SET_IP_SCRIPT_FILE_PATH + " \"" + name + "\" " + ip + " " + mask + " " + gateway + " " + favDNS + " " + auxDNS);
+            process = runtime.exec(MainWindow.INTERFACE_SET_IP_SCRIPT_FILE_PATH + " setip \"" + name + "\" " + ip + " " + mask + " " + gateway + " " + favDNS + " " + auxDNS);
         BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String result = input.readLine();
-        return result != null && result.equals(SUCCESS_STRING);
+        return result != null && result.equals(MainWindow.SUCCESS_STRING);
     }
 }

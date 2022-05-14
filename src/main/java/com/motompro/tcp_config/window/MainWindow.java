@@ -8,13 +8,17 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class MainWindow extends JFrame implements KeyListener {
 
     private static final String WINDOW_TITLE = "TCPConfig v" + TCPConfig.VERSION;
     private static final Dimension DEFAULT_WINDOW_DIMENSION = new Dimension(960, 600);
+    public static final String INTERFACE_SET_IP_SCRIPT_FILE_PATH = "D:\\temp\\NetInterfaceIPSetter.exe";
+    public static final String SUCCESS_STRING = "success";
 
     private JPanel mainPanel;
     private ConfigListComponent configListComponent;
@@ -25,6 +29,8 @@ public class MainWindow extends JFrame implements KeyListener {
     private JButton importButton;
     private JButton listButton;
     private JButton openNetworkConnectionsButton;
+    private JButton autoIpButton;
+    private JButton autoDnsButton;
 
     public MainWindow() {
         init();
@@ -77,6 +83,14 @@ public class MainWindow extends JFrame implements KeyListener {
         openNetworkConnectionsButton = new JButton("Connex.");
         openNetworkConnectionsButton.setFocusable(false);
         openNetworkConnectionsButton.addActionListener(event -> openNetworkConnectionsMenu());
+        // Auto IP button
+        autoIpButton = new JButton("Auto-IP");
+        autoIpButton.setFocusable(false);
+        autoIpButton.addActionListener(event -> setIpConfig("autoip"));
+        // Auto DNS
+        autoDnsButton = new JButton("Auto-DNS");
+        autoDnsButton.setFocusable(false);
+        autoDnsButton.addActionListener(event -> setIpConfig("autodns"));
     }
 
     private JPanel createButtonsPanel(JButton... buttons) {
@@ -107,7 +121,7 @@ public class MainWindow extends JFrame implements KeyListener {
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
-        mainPanel.add(createButtonsPanel(newButton, importButton, openNetworkConnectionsButton), constraints);
+        mainPanel.add(createButtonsPanel(newButton, importButton, autoIpButton, autoDnsButton, openNetworkConnectionsButton), constraints);
         this.repaint();
         this.setVisible(true);
     }
@@ -125,7 +139,7 @@ public class MainWindow extends JFrame implements KeyListener {
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
-        mainPanel.add(createButtonsPanel(listButton, importButton, openNetworkConnectionsButton), constraints);
+        mainPanel.add(createButtonsPanel(listButton, importButton, autoIpButton, autoDnsButton, openNetworkConnectionsButton), constraints);
         this.repaint();
         this.setVisible(true);
     }
@@ -143,7 +157,7 @@ public class MainWindow extends JFrame implements KeyListener {
         // Add buttons panel
         constraints.gridx = 1;
         constraints.weightx = 0;
-        mainPanel.add(createButtonsPanel(listButton, newButton, importButton, openNetworkConnectionsButton), constraints);
+        mainPanel.add(createButtonsPanel(listButton, newButton, importButton, autoIpButton, autoDnsButton, openNetworkConnectionsButton), constraints);
         this.repaint();
         this.setVisible(true);
     }
@@ -184,9 +198,30 @@ public class MainWindow extends JFrame implements KeyListener {
         configListComponent.revalidate();
     }
 
-    public void openNetworkConnectionsMenu() {
+    private void openNetworkConnectionsMenu() {
         try {
             Runtime.getRuntime().exec("cmd /c ncpa.cpl");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setIpConfig(String option) {
+        try {
+            Process process = Runtime.getRuntime().exec(MainWindow.INTERFACE_SET_IP_SCRIPT_FILE_PATH + " " + option);
+            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String result = input.readLine();
+            if(result == null || result.equals(SUCCESS_STRING)) {
+                JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                        "Échec de l'opération",
+                        "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                    "La configuration réseau a bien été changée",
+                    "Succès",
+                    JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             e.printStackTrace();
         }
