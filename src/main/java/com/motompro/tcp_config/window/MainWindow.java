@@ -43,7 +43,7 @@ public class MainWindow extends JFrame implements KeyListener {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+            showExceptionOptionPane(e);
         }
         // Window settings
         this.setTitle(WINDOW_TITLE);
@@ -202,7 +202,7 @@ public class MainWindow extends JFrame implements KeyListener {
         try {
             Runtime.getRuntime().exec("cmd /c ncpa.cpl");
         } catch (IOException e) {
-            e.printStackTrace();
+            showExceptionOptionPane(e);
         }
     }
 
@@ -223,8 +223,15 @@ public class MainWindow extends JFrame implements KeyListener {
                     "Succès",
                     JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
-            e.printStackTrace();
+            showExceptionOptionPane(e);
         }
+    }
+
+    public void showExceptionOptionPane(Exception e) {
+        JOptionPane.showMessageDialog(TCPConfig.getInstance().getMainWindow(),
+                e.getMessage(),
+                "Erreur",
+                JOptionPane.ERROR_MESSAGE);
     }
 
     @Override

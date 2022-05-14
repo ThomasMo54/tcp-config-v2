@@ -18,6 +18,7 @@ public class TCPConfig {
 
     private static TCPConfig instance;
 
+    private URL jarURL;
     private final Images images;
     private final List<NetworkAdapter> networkAdapters;
     private final MainWindow mainWindow;
@@ -26,8 +27,8 @@ public class TCPConfig {
     public TCPConfig() {
         instance = this;
         this.images = new Images();
-        this.configs = loadConfigs();
         this.mainWindow = new MainWindow();
+        this.configs = loadConfigs();
         this.networkAdapters = loadNetworkAdapters();
     }
 
@@ -41,7 +42,7 @@ public class TCPConfig {
                 adapters.add(new NetworkAdapter(adapter));
             return adapters;
         } catch (IOException e) {
-            e.printStackTrace();
+            mainWindow.showExceptionOptionPane(e);
         }
         return adapters;
     }
@@ -72,10 +73,10 @@ public class TCPConfig {
                 }
                 reader.close();
             } catch (NumberFormatException e) {
-                e.printStackTrace();
+                mainWindow.showExceptionOptionPane(e);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            mainWindow.showExceptionOptionPane(e);
         }
         return configList;
     }
@@ -99,8 +100,8 @@ public class TCPConfig {
                 writer.write((config.getAuxDNS() != null ? config.getAuxDNS() : "") + "\n");
             }
             writer.close();
-        }catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            mainWindow.showExceptionOptionPane(e);
         }
     }
 
@@ -129,7 +130,7 @@ public class TCPConfig {
                 exportFile.getParentFile().mkdirs();
                 exportFile.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                mainWindow.showExceptionOptionPane(e);
                 return;
             }
         }
@@ -143,7 +144,7 @@ public class TCPConfig {
             writer.write((config.getAuxDNS() != null ? config.getAuxDNS() : "") + "\n");
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            mainWindow.showExceptionOptionPane(e);
         }
     }
 
@@ -169,10 +170,10 @@ public class TCPConfig {
                 mainWindow.updateConfigs();
                 saveConfigs();
             } catch (NumberFormatException | IOException e) {
-                e.printStackTrace();
+                mainWindow.showExceptionOptionPane(e);
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            mainWindow.showExceptionOptionPane(e);
         }
     }
 
@@ -193,11 +194,13 @@ public class TCPConfig {
     }
 
     public URL getJarLocation() {
+        if(jarURL != null)
+            return jarURL;
         try {
             final URL codeSourceLocation = TCPConfig.class.getProtectionDomain().getCodeSource().getLocation();
             if(codeSourceLocation != null) return codeSourceLocation;
         } catch(SecurityException | NullPointerException e) {
-            e.printStackTrace();
+            mainWindow.showExceptionOptionPane(e);
         }
 
         final URL classResource = TCPConfig.class.getResource(TCPConfig.class.getSimpleName() + ".class");
@@ -214,9 +217,10 @@ public class TCPConfig {
         if (path.startsWith("jar:")) path = path.substring(4, path.length() - 2);
 
         try {
-            return new URL(path);
+            jarURL = new URL(path);
+            return jarURL;
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            mainWindow.showExceptionOptionPane(e);
             return null;
         }
     }
