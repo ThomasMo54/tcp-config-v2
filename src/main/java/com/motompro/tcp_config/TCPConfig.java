@@ -27,8 +27,8 @@ public class TCPConfig {
     public TCPConfig() {
         instance = this;
         this.images = new Images();
-        this.mainWindow = new MainWindow();
         this.configs = loadConfigs();
+        this.mainWindow = new MainWindow();
         this.networkAdapters = loadNetworkAdapters();
     }
 
@@ -73,10 +73,10 @@ public class TCPConfig {
                 }
                 reader.close();
             } catch (NumberFormatException e) {
-                mainWindow.showExceptionOptionPane(e);
+                e.printStackTrace();
             }
         } catch (IOException e) {
-            mainWindow.showExceptionOptionPane(e);
+            e.printStackTrace();
         }
         return configList;
     }
