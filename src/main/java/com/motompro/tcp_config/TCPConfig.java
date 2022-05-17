@@ -2,19 +2,25 @@ package com.motompro.tcp_config;
 
 import com.motompro.tcp_config.window.MainWindow;
 
+import javax.swing.*;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class TCPConfig {
 
-    public static final String VERSION = "2.0";
+    public static final String VERSION = "2.21";
     public static final String TCPC_FILE_EXTENSION = "tcpc";
 
     private static final String SAVE_FILE_PATH = "D:\\temp\\save.txt";
     private static final String INTERFACE_GET_SCRIPT_FILE_PATH = "D:\\temp\\NetInterfaceGetter.exe";
+    private static final String GET_VERSION_URL = "http://motompro.com/tcpconfig-version.php";
+    private static final int GET_VERSION_REQUEST_TIMEOUT = 5000;
 
     private static TCPConfig instance;
 
@@ -30,6 +36,7 @@ public class TCPConfig {
         this.configs = loadConfigs();
         this.mainWindow = new MainWindow();
         this.networkAdapters = loadNetworkAdapters();
+        checkForNewVersion();
     }
 
     private List<NetworkAdapter> loadNetworkAdapters() {
@@ -79,6 +86,44 @@ public class TCPConfig {
             e.printStackTrace();
         }
         return configList;
+    }
+
+    private void checkForNewVersion() {
+        try {
+            URL url = new URL(GET_VERSION_URL);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setConnectTimeout(GET_VERSION_REQUEST_TIMEOUT);
+            CompletableFuture<Optional<String>> newerVersionCompletableFuture = new CompletableFuture<>();
+            new Thread(() -> {
+                try {
+                    int status = con.getResponseCode();
+                    if(status != 200) {
+                        newerVersionCompletableFuture.complete(Optional.empty());
+                        return;
+                    }
+                    BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    String newerVersion = in.readLine();
+                    in.close();
+                    con.disconnect();
+                    newerVersionCompletableFuture.complete(Optional.ofNullable(newerVersion));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+            newerVersionCompletableFuture.thenAccept(newerVersionOpt -> newerVersionOpt.ifPresent(newerVersion -> {
+                if(newerVersion.equals(VERSION))
+                    return;
+                int answer = JOptionPane.showConfirmDialog(TCPConfig.getInstance().getMainWindow(),
+                        "Une nouvelle version du logiciel a été trouvée (v" + newerVersion + "), voulez-vous la télécharger ?",
+                        "Mise à jour",
+                        JOptionPane.YES_NO_OPTION);
+                if(answer != JOptionPane.YES_OPTION)
+                    return;
+            }));
+        } catch (IOException e) {
+            mainWindow.showExceptionOptionPane(e);
+        }
     }
 
     private void saveConfigs() {
