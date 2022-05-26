@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class TCPConfig {
 
-    public static final String VERSION = "2.21";
+    public static final String VERSION = "2.0";
     public static final String TCPC_FILE_EXTENSION = "tcpc";
 
     private static final String SAVE_FILE_PATH = "save.txt";
