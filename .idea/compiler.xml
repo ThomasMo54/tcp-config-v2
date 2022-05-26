@@ -9,5 +9,8 @@
         <module name="TCPConfig" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="TCPConfig_Updater" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

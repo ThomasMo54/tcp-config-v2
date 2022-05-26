@@ -19,6 +19,7 @@ public class TCPConfig {
 
     private static final String SAVE_FILE_PATH = "D:\\temp\\save.txt";
     private static final String INTERFACE_GET_SCRIPT_FILE_PATH = "D:\\temp\\NetInterfaceGetter.exe";
+    private static final String UPDATER_FILE_PATH = "D:\\temp\\TCPConfig_updater.exe";
     private static final String GET_VERSION_URL = "http://motompro.com/tcpconfig-version.php";
     private static final int GET_VERSION_REQUEST_TIMEOUT = 5000;
 
@@ -120,6 +121,12 @@ public class TCPConfig {
                         JOptionPane.YES_NO_OPTION);
                 if(answer != JOptionPane.YES_OPTION)
                     return;
+                try {
+                    Runtime.getRuntime().exec(UPDATER_FILE_PATH);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.exit(0);
             }));
         } catch (IOException e) {
             mainWindow.showExceptionOptionPane(e);
