@@ -17,15 +17,16 @@ public class TCPConfig {
     public static final String VERSION = "2.21";
     public static final String TCPC_FILE_EXTENSION = "tcpc";
 
-    private static final String SAVE_FILE_PATH = "D:\\temp\\save.txt";
-    private static final String INTERFACE_GET_SCRIPT_FILE_PATH = "D:\\temp\\NetInterfaceGetter.exe";
-    private static final String UPDATER_FILE_PATH = "D:\\temp\\TCPConfig_updater.exe";
+    private static final String SAVE_FILE_PATH = "save.txt";
+    private static final String INTERFACE_GET_SCRIPT_FILE_PATH = "scripts/NetInterfaceGetter.exe";
+    public static final String INTERFACE_SET_IP_SCRIPT_FILE_PATH = "scripts/NetInterfaceIPSetter.exe";
+    private static final String UPDATER_FILE_PATH = "TCPConfig_updater.exe";
     private static final String GET_VERSION_URL = "http://motompro.com/tcpconfig-version.php";
     private static final int GET_VERSION_REQUEST_TIMEOUT = 5000;
 
     private static TCPConfig instance;
 
-    private URL jarURL;
+    private String jarURL;
     private final Images images;
     private final List<NetworkAdapter> networkAdapters;
     private final MainWindow mainWindow;
@@ -43,7 +44,7 @@ public class TCPConfig {
     private List<NetworkAdapter> loadNetworkAdapters() {
         List<NetworkAdapter> adapters = new ArrayList<>();
         try {
-            Process process = Runtime.getRuntime().exec(INTERFACE_GET_SCRIPT_FILE_PATH);
+            Process process = Runtime.getRuntime().exec(getJarLocation() + INTERFACE_GET_SCRIPT_FILE_PATH);
             BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String adapter;
             while((adapter = input.readLine()) != null)
@@ -57,7 +58,7 @@ public class TCPConfig {
 
     private List<Config> loadConfigs() {
         List<Config> configList = new ArrayList<>();
-        File saveFile = new File(SAVE_FILE_PATH);
+        File saveFile = new File(getJarLocation() + SAVE_FILE_PATH);
         try {
             if(!saveFile.exists()) {
                 saveFile.getParentFile().mkdirs();
@@ -122,7 +123,7 @@ public class TCPConfig {
                 if(answer != JOptionPane.YES_OPTION)
                     return;
                 try {
-                    Runtime.getRuntime().exec(UPDATER_FILE_PATH);
+                    Runtime.getRuntime().exec(getJarLocation() + UPDATER_FILE_PATH);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -134,7 +135,7 @@ public class TCPConfig {
     }
 
     private void saveConfigs() {
-        File saveFile = new File(SAVE_FILE_PATH);
+        File saveFile = new File(getJarLocation() + SAVE_FILE_PATH);
         try {
             if(!saveFile.exists()) {
                 saveFile.getParentFile().mkdirs();
@@ -245,12 +246,16 @@ public class TCPConfig {
         return configs;
     }
 
-    public URL getJarLocation() {
+    public String getJarLocation() {
         if(jarURL != null)
             return jarURL;
         try {
             final URL codeSourceLocation = TCPConfig.class.getProtectionDomain().getCodeSource().getLocation();
-            if(codeSourceLocation != null) return codeSourceLocation;
+            if(codeSourceLocation != null) {
+                File file = new File(codeSourceLocation.getPath());
+                jarURL = file.getParent() + "\\";
+                return jarURL;
+            }
         } catch(SecurityException | NullPointerException e) {
             mainWindow.showExceptionOptionPane(e);
         }
@@ -268,13 +273,9 @@ public class TCPConfig {
 
         if (path.startsWith("jar:")) path = path.substring(4, path.length() - 2);
 
-        try {
-            jarURL = new URL(path);
-            return jarURL;
-        } catch (MalformedURLException e) {
-            mainWindow.showExceptionOptionPane(e);
-            return null;
-        }
+        File file = new File(path);
+        jarURL = file.getParent() + "\\";
+        return jarURL;
     }
 
     public static TCPConfig getInstance() {

@@ -17,7 +17,6 @@ public class MainWindow extends JFrame implements KeyListener {
 
     private static final String WINDOW_TITLE = "TCPConfig v" + TCPConfig.VERSION;
     private static final Dimension DEFAULT_WINDOW_DIMENSION = new Dimension(960, 600);
-    public static final String INTERFACE_SET_IP_SCRIPT_FILE_PATH = "D:\\temp\\NetInterfaceIPSetter.exe";
     public static final String SUCCESS_STRING = "success";
 
     private JPanel mainPanel;
@@ -208,7 +207,7 @@ public class MainWindow extends JFrame implements KeyListener {
 
     private void setIpConfig(String option) {
         try {
-            Process process = Runtime.getRuntime().exec(MainWindow.INTERFACE_SET_IP_SCRIPT_FILE_PATH + " " + option);
+            Process process = Runtime.getRuntime().exec(TCPConfig.getInstance().getJarLocation() + TCPConfig.INTERFACE_SET_IP_SCRIPT_FILE_PATH + " " + option);
             BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String result = input.readLine();
             if(result == null || result.equals(SUCCESS_STRING)) {
